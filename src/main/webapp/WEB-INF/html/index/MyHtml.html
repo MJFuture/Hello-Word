@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="fragments :: head(title=~{::title/text()})">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+  </head>
+  
+  <body>
+	<div class="container">
+			<div th:replace="fragments :: navbar"></div>
+			<div class="float-right mt-2">
+				<a class="btn btn-primary btn-sm" href="javascript:void(0);"  th:onclick="add()">Create user</a>
+			</div>
+			<h4 class="float-left mt-2">Messages : View all</h4>
+  			<table class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th>用戶賬戶</th>
+						<th>性別</th>
+						<th>昵稱</th>
+						<th>创建时间</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:if="${uers.list.empty}">
+						<td colspan="3">No messages</td>
+					</tr>
+					<tr th:each="message : ${uers.list}" >
+						<td th:text="${message.userName}"></td>
+						<td th:text="${message.userSex}"></td>
+						<td th:text="${message.nickName}"></td>
+						<td th:text="${#dates.format(message.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+						<td ><a th:onclick="update([[${message.id}]])" th:text="修改"></a></td>
+					</tr>
+				</tbody>
+			</table>
+		<div id="pageToolbar"></div>
+		<a th:href="@{/mian(pn=1)}">首页</a>
+<!-- 		<a th:each="p:${uers.navigatepageNums}" th:href="@{/mian(pn=${p})}" >[[${p}]]  </a> -->
+		<a th:each="p:${uers.navigatepageNums}" th:href="@{/mian(pn=${p})}" th:text="${p}"  ></a>
+		<a th:href="@{/mian(pn=${uers.pages})}">最后页</a>
+		<p>一共 <i th:text="${uers.pages}"> </i> 页 --当前页是  <i th:text="${uers.pageNum } "> </i>-- 共有 <i th:text="${uers.total}"> </i>条数据   每頁 <i th:text="${uers.pageSize}"></i></p>
+	</div>
+  </body>
+  <script th:src="@{/static/js/query.js}"></script>
+ <script th:src="@{/static/js/paging.js}"></script>
+ <script th:inline="javascript">
+ 		//當前多少條   //總條數 // 是否顯示跳轉 //當前第幾頁
+		$('#pageToolbar').Paging({pagesize:/*[[${uers.pageSize}]]*/,count:/*[[${uers.total}]]*/,toolbar:true,pageNum:/*[[${uers.pageNum}]]*/});
+		function pageTurning(pn,pr){
+			if(pn!=null && pr==null){
+				window.location.href="/mian?pn="+pn;
+			}
+			if(pr!=null && pn==null){
+				window.location.href="/mian?pr="+pr;
+			}
+			if(pr!=null && pn!=null){
+				window.location.href="/mian?pr="+pr+"&pn="+pn;
+			}
+		}
+		function add(){
+		layer.open({
+		  type: 2,
+		  title: '添加用戶',
+		  shadeClose: true,
+		  shade: 0.8,
+		  area: ['880px', '600px'],
+		  content: '/adduser?alias=add'
+		}); 
+		}
+		function update(id){
+		layer.open({
+		  type: 2,
+		  title: '添加用戶',
+		  shadeClose: true,
+		  shade: 0.8,
+		  area: ['880px', '600px'],
+		  content: '/edituser?id='+id
+		}); 
+		
+		}
+</script>
+</html>

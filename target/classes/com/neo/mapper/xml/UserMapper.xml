@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neo.mapper.UserMapper" >
+    <resultMap id="BaseResultMap" type="com.neo.entity.UserEntity" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="userName" property="userName" jdbcType="VARCHAR" />
+        <result column="passWord" property="passWord" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="user_sex" property="userSex" javaType="com.neo.enums.UserSexEnum"/>
+        <result column="nick_name" property="nickName" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="Base_Column_List" >
+        id, userName, passWord, user_sex, nick_name,create_time
+    </sql>
+
+    <select id="getAll" resultMap="BaseResultMap"  >
+       SELECT 
+       <include refid="Base_Column_List" />
+	   FROM users
+    </select>
+ 	<select id="listUsers" resultMap="BaseResultMap" parameterType="com.neo.entity.UserEntity" >
+       SELECT 
+       <include refid="Base_Column_List" />
+	   FROM users
+	   where 1=1
+	   <if test="id != null">and id = #{id}</if>
+	   <if test="userName != null">and userName = #{userName}</if>
+	   <if test="nickName != null">and nick_name = #{nickName}</if>
+	   <if test="userSex != null">and user_sex = #{userSex}</if>
+    </select>
+    <select id="getOne" parameterType="java.lang.Long" resultMap="BaseResultMap" >
+        SELECT 
+       <include refid="Base_Column_List" />
+	   FROM users
+	   WHERE id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.neo.entity.UserEntity" >
+       INSERT INTO 
+       		users
+       		(userName,passWord,user_sex,nick_name) 
+       	VALUES
+       		(#{userName}, #{passWord}, #{userSex},#{nickName})
+    </insert>
+    
+    <update id="update" parameterType="com.neo.entity.UserEntity" >
+       UPDATE 
+       		users 
+       SET 
+       	<if test="userName != null">userName = #{userName},</if>
+       	<if test="passWord != null">passWord = #{passWord},</if>
+       	<if test="nickName != null">nick_name = #{nickName},</if>
+       WHERE 
+       		id = #{id}
+    </update>
+    
+    <delete id="delete" parameterType="java.lang.Long" >
+       DELETE FROM
+       		 users 
+       WHERE 
+       		 id =#{id}
+    </delete>
+    
+    <!-- 根据查询条件获取查询获得的数据量 -->
+    <select id="size" parameterType="com.neo.entity.UserEntity" resultType="Long">
+        select count(*) from users
+        <where>
+         <if test="id != null">AND stu_id like
+                CONCAT(CONCAT('%',
+                #{id,jdbcType=BIGINT}),'%')</if>
+	   <if test="userName != null">and userName = #{userName}</if>
+	   <if test="nickName != null">and nick_name = #{nickName}</if>
+	   <if test="userSex != null">and user_sex = #{userSex}</if>
+            <if test="name != null and name != ''">
+                AND userName like
+                CONCAT(CONCAT('%',
+                #{userName,jdbcType=VARCHAR}),'%')
+            </if>
+            <if test="name != null and name != ''">
+                AND nick_name like
+                CONCAT(CONCAT('%',
+                #{nickName,jdbcType=VARCHAR}),'%')
+            </if>
+           <!--  <if test="deptId != null">
+                AND dept_id in
+                <foreach item="item" index="index" collection="deptId" open="("
+                    separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="bankName != null">
+                AND bank_name in
+                <foreach item="item" index="index" collection="bankName"
+                    open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if> -->
+        </where>
+    </select>
+    
+    
+    
+    
+    
+
+</mapper>
